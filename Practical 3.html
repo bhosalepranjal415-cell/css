@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 3</title>
+    <title>JSON Object Example</title>
+</head>
+<body>
+    <h2>JSON Object Example</h2>
+    <p id="result"></p>
+    <script>
+        //creating JSON Object
+        let student={
+            "Name":"Pranjal",
+            "Age":20,
+            "Course":"Computer Engineering",
+            "Marks":{
+                "html":85,
+                "css":80,
+                "javascript":79,
+            }
+        };
+
+        let output="Name:"+student.Name+"<br>"+
+        "Age:"+student.Age+"<br>"+
+        "Course:"+student.Course+"<br>"+
+        "HTML Marks:"+student.Marks.html+"<br>";
+        document.getElementById("result").innerHTML = output;
+
+    </script>
+</body>
+</html>
