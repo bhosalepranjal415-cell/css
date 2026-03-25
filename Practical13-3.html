@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>Uppercase & Lowercase Filter</title>
+
+    <!-- AngularJS CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- CSS -->
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        p {
+            font-size: 20px;
+            color: rgb(137, 77, 172);
+        }
+    </style>
+</head>
+
+<body ng-controller="myCtrl">
+
+    <h2>Uppercase and Lowercase using AngularJS</h2>
+
+    <p>Uppercase: {{ message | uppercase }}</p>
+    <p>Lowercase: {{ message | lowercase }}</p>
+
+    <!-- Controller -->
+    <script>
+        var app = angular.module("myApp", []);
+        app.controller("myCtrl", function ($scope) {
+            $scope.message = "Welcome To AngularJS";
+        });
+    </script>
+
+</body>
+</html>

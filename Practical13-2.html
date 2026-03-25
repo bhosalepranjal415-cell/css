@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="studentApp">
+<head>
+    <title>Student Table with orderBy</title>
+
+    <!-- AngularJS CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- CSS -->
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: auto;
+            width: 60%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e6e6e6;
+        }
+    </style>
+</head>
+
+<body ng-controller="studentCtrl">
+
+    <h2>Student Details</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Marks</th>
+        </tr>
+
+        <!-- orderBy filter applied on name -->
+        <tr ng-repeat="s in students | orderBy:'name'">
+            <td>{{s.name}}</td>
+            <td>{{s.roll}}</td>
+            <td>{{s.marks}}</td>
+        </tr>
+    </table>
+
+    <!-- Controller -->
+    <script>
+        var app = angular.module("studentApp", []);
+
+        app.controller("studentCtrl", function ($scope) {
+            $scope.students = [
+                { name: 'Ravi', roll: 3, marks: 78 },
+                { name: 'Anita', roll: 1, marks: 85 },
+                { name: 'Amruta', roll: 4, marks: 90 },
+                { name: 'Bhavya', roll: 2, marks: 72 }
+            ];
+        });
+    </script>
+
+</body>
+</html>

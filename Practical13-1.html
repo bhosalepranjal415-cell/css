@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Display</title>
+
+    <!-- CSS -->
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: rgb(172, 41, 106);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #msg {
+            color: green;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Display Message Using Controller</h2>
+
+    <button onclick="showMessage()">Click Me</button>
+
+    <p id="msg"></p>
+
+    <!-- Controller (JavaScript) -->
+    <script>
+        function showMessage() {
+            document.getElementById("msg").innerHTML =
+                "Hello..! Message Displayed..! ";
+        }
+    </script>
+
+</body>
+</html>

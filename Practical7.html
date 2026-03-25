@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="regApp">
+<head>
+<title>Extended Registration Form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<style>
+body { font-family: Arial; padding: 20px; }
+label { display: inline-block; width: 120px; margin-bottom: 8px; }
+input { margin-bottom: 8px; }
+.box { margin-top: 20px; padding: 15px; border: 1px solid #333; width: 350px; }
+</style>
+</head>
+<body ng-controller="regCtrl">
+
+<h2>Registration Form</h2>
+
+<form ng-submit="register()">
+
+<label>Full Name:</label>
+<input type="text" ng-model="student.name" required><br>
+
+<label>Email:</label>
+<input type="email" ng-model="student.email" required><br>
+
+<label>Mobile:</label>
+<input type="text" ng-model="student.mobile" required><br>
+
+<label>Gender:</label>
+<select ng-model="student.gender">
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select><br>
+
+<label>City:</label>
+<input type="text" ng-model="student.city"><br>
+
+<label>Course:</label>
+<select ng-model="student.course">
+<option>AngularJS</option>
+<option>ReactJS</option>
+<option>NodeJS</option>
+<option>Python</option>
+</select><br>
+
+<button type="submit">Register</button>
+</form>
+
+<div class="box" ng-show="submitted">
+<h3>Registration Details:</h3>
+<p><b>Name:</b> {{student.name}}</p>
+<p><b>Email:</b> {{student.email}}</p>
+<p><b>Mobile:</b> {{student.mobile}}</p>
+<p><b>Gender:</b> {{student.gender}}</p>
+<p><b>City:</b> {{student.city}}</p>
+<p><b>Course:</b> {{student.course}}</p>
+</div>
+
+<script>
+var app = angular.module("regApp", []);
+app.controller("regCtrl", function($scope) {
+$scope.submitted = false;
+
+$scope.student = {
+name: "",
+email: "",
+mobile: "",
+gender: "",
+city: "",
+course: ""
+};
+
+$scope.register = function() {
+$scope.submitted = true;
+};
+});
+</script>
+
+</body>
+</html>

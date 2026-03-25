@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+<title>Two-Way Data Binding Example</title>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js "> </script>
+</head>
+<body ng-controller="myCtrl">
+
+<h2>Two-Way Data Binding Demo</h2>
+
+<label>Enter Name:</label>
+<input type="text" ng-model="userName">
+
+<p>Hello, {{userName}}!</p>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+$scope.userName = "Guest";
+});
+</script>
+
+</body>
+</html>

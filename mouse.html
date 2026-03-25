@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html ng-app="scrollApp">
+<head>
+  <title>Slow Movement on Scroll</title>
+
+  <!-- AngularJS CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+  <style>
+    body {
+      height: 2000px;
+      font-family: Arial;
+    }
+
+    .box {
+      width: 250px;
+      height: 150px;
+      background-color: rgb(181, 211, 223);
+      text-align: center;
+      line-height: 150px;
+      font-size: 20px;
+      position: fixed;
+      top: 40%;
+      left: 35%;
+      transition: all 1.5s ease;   /* 👈 slow movement */
+    }
+
+    .afterScroll {
+      background-color: rgb(182, 80, 128);
+      transform: translateY(150px); /* 👈 slow downward movement */
+    }
+  </style>
+</head>
+
+<body ng-controller="ScrollCtrl">
+
+  <div class="box" ng-class="{'afterScroll': scrolled}">
+    Scroll Mouse
+  </div>
+
+  <script>
+    var app = angular.module("scrollApp", []);
+
+    app.controller("ScrollCtrl", function ($scope, $window) {
+
+      $scope.scrolled = false;
+
+      angular.element($window).on("scroll", function () {
+        $scope.$apply(function () {
+          $scope.scrolled = true;
+        });
+      });
+
+    });
+  </script>
+
+</body>
+</html>
