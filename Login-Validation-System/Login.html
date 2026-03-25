@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login Validation System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* Remove default browser spacing */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+/* Body - perfectly centered */
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#f8c8dc,#c8a2c8);
+  font-family:Arial, sans-serif;
+}
+
+/* Login Box */
+.box{
+  background:#ffffff;
+  padding:25px;
+  width:100%;
+  max-width:350px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  text-align:center;
+  margin:20px; /* Equal spacing on all sides */
+}
+
+/* Title */
+h2{
+  color:#7b3f98;
+  margin-bottom:10px;
+}
+
+/* Labels */
+label{
+  display:block;
+  text-align:left;
+  margin-top:12px;
+  font-size:14px;
+}
+
+/* Inputs */
+input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  transition:0.3s;
+}
+
+/* Error & Success */
+input.error{
+  border:2px solid #ff4d4d;
+  background-color:#ffe6e6;
+}
+input.success{
+  border:2px solid #28a745;
+  background-color:#e6ffee;
+}
+
+/* Shake Animation */
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+.shake{
+  animation:shake 0.3s;
+}
+
+/* Buttons */
+.btn-group{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  background:#781ea1;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+button.reset{
+  background:#c96691;
+}
+button:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+}
+
+/* Messages */
+.message{
+  margin-top:10px;
+  font-size:14px;
+  text-align:left;
+}
+.error-msg{ color:red; }
+.success-msg{ color:green; }
+
+#welcomePage{ display:none; }
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="box" id="loginPage">
+  <h2>Login</h2>
+
+  <label>Email</label>
+  <input type="text" id="username">
+
+  <label>Password</label>
+  <input type="password" id="password">
+
+  <div class="btn-group">
+    <button onclick="login()" id="loginBtn">Login</button>
+    <button class="reset" onclick="resetForm()">Reset</button>
+  </div>
+
+  <div class="message" id="message"></div>
+</div>
+
+<!-- WELCOME PAGE -->
+<div class="box" id="welcomePage">
+  <h2 id="welcomeText"></h2>
+  <p>You have logged in successfully 🎉</p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+
+/* Valid credentials */
+const VALID_USER="admin@example.com";
+const VALID_PASS="Admin@123";
+const MAX_ATTEMPTS=3;
+const LOCK_TIME=10000;
+
+let attempts=Number(localStorage.getItem("attempts"))||0;
+let lockUntil=Number(localStorage.getItem("lockUntil"))||0;
+let timerInterval=null;
+
+const userInput=document.getElementById("username");
+const passInput=document.getElementById("password");
+const message=document.getElementById("message");
+const loginPage=document.getElementById("loginPage");
+const welcomePage=document.getElementById("welcomePage");
+const welcomeText=document.getElementById("welcomeText");
+const loginBtn=document.getElementById("loginBtn");
+
+/* Email Validation */
+function validateEmail(email){
+  if(!email) return "• Email field cannot be empty";
+  const pattern=/^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+  if(!pattern.test(email)) return "• Invalid email format";
+  return "";
+}
+
+/* Password Validation */
+function validatePassword(password){
+  let errors=[];
+  if(!password){ errors.push("• Password field cannot be empty"); return errors; }
+  if(password.length<8) errors.push("• Minimum 8 characters required");
+  if(!/[A-Z]/.test(password)) errors.push("• At least one uppercase letter required");
+  if(!/[a-z]/.test(password)) errors.push("• At least one lowercase letter required");
+  if(!/[0-9]/.test(password)) errors.push("• At least one number required");
+  if(!/[!@#$%^&*]/.test(password)) errors.push("• At least one special character required");
+  return errors;
+}
+
+/* UI Helpers */
+function showError(input){
+  input.classList.add("error","shake");
+  input.classList.remove("success");
+  setTimeout(()=>input.classList.remove("shake"),300);
+}
+function showSuccess(input){
+  input.classList.remove("error");
+  input.classList.add("success");
+}
+
+/* Lock System */
+function isLocked(){ return Date.now()<lockUntil; }
+
+function disableUI(){
+  userInput.disabled=true;
+  passInput.disabled=true;
+  loginBtn.disabled=true;
+}
+
+function enableUI(){
+  userInput.disabled=false;
+  passInput.disabled=false;
+  loginBtn.disabled=false;
+}
+
+function startCountdown(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    const remaining=Math.ceil((lockUntil-Date.now())/1000);
+    if(remaining<=0){
+      clearInterval(timerInterval);
+      unlockAccount();
+    }else{
+      message.textContent=`Account locked. Try again in ${remaining} second(s).`;
+      message.className="message error-msg";
+    }
+  },1000);
+}
+
+function lockAccount(){
+  lockUntil=Date.now()+LOCK_TIME;
+  localStorage.setItem("lockUntil",lockUntil);
+  disableUI();
+  startCountdown();
+}
+
+function unlockAccount(){
+  enableUI();
+  attempts=0;
+  localStorage.setItem("attempts",0);
+  localStorage.removeItem("lockUntil");
+  message.textContent="You can try logging in again.";
+  message.className="message success-msg";
+}
+
+/* Login Function */
+function login(){
+  if(isLocked()) return;
+
+  const username=userInput.value.trim();
+  const password=passInput.value.trim();
+  message.innerHTML="";
+  let valid=true;
+
+  const emailError=validateEmail(username);
+  if(emailError){
+    showError(userInput);
+    message.innerHTML+=emailError+"<br>";
+    valid=false;
+  }else showSuccess(userInput);
+
+  const passwordErrors=validatePassword(password);
+  if(passwordErrors.length>0){
+    showError(passInput);
+    message.innerHTML+=passwordErrors.join("<br>");
+    valid=false;
+  }else showSuccess(passInput);
+
+  if(!valid){
+    message.className="message error-msg";
+    return;
+  }
+
+  if(username===VALID_USER && password===VALID_PASS){
+    localStorage.setItem("attempts",0);
+    localStorage.removeItem("lockUntil");
+    loginPage.style.display="none";
+    welcomePage.style.display="block";
+    welcomeText.textContent=`Hello, ${username}`;
+    return;
+  }
+
+  attempts++;
+  localStorage.setItem("attempts",attempts);
+
+  if(attempts>=MAX_ATTEMPTS){
+    lockAccount();
+  }else{
+    message.innerHTML=`• Incorrect email or password<br>• Remaining attempts: ${MAX_ATTEMPTS-attempts}`;
+    message.className="message error-msg";
+    showError(userInput);
+    showError(passInput);
+  }
+}
+
+/* Reset */
+function resetForm(){
+  userInput.value="";
+  passInput.value="";
+  userInput.classList.remove("error","success");
+  passInput.classList.remove("error","success");
+  message.innerHTML="";
+}
+
+/* Logout */
+function logout(){
+  welcomePage.style.display="none";
+  loginPage.style.display="block";
+  resetForm();
+}
+
+/* Restore lock state */
+if(isLocked()){
+  disableUI();
+  startCountdown();
+}
+
+</script>
+
+</body>
+</html>
